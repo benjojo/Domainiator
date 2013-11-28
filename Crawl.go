@@ -21,7 +21,7 @@ type LogPayload struct {
 func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGroup) {
 	// Decreasing internal counter for wait-group as soon as goroutine finishes
 	defer wg.Done()
-	http.DefaultTransport.(*http.Transport).ResponseHeaderTimeout = time.Second * 45
+	http.DefaultTransport.(*http.Transport).ResponseHeaderTimeout = time.Second * 15
 	for url := range linkChan {
 		start := time.Now()
 		formattedurl := fmt.Sprintf("http://%s.com/", strings.TrimSpace(url))
