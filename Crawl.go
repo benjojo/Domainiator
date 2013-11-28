@@ -7,22 +7,49 @@ import (
 	"net/http"
 	"strings"
 	"sync"
-	// "time"
+	"time"
 )
+
+type LogPayload struct {
+	Sucessful   bool
+	Headers     http.Header
+	DomainName  string
+	RequestTime int64
+}
 
 func worker(linkChan chan string, resultsChan chan string, wg *sync.WaitGroup) {
 	// Decreasing internal counter for wait-group as soon as goroutine finishes
 	defer wg.Done()
 
 	for url := range linkChan {
+		start := time.Now()
 		formattedurl := fmt.Sprintf("http://%s.com/", strings.TrimSpace(url))
 		urlobj, e := http.Get(formattedurl)
 		// fmt.Printf("BRB getting '%s'\n", formattedurl)
 		if e == nil {
-			b, _ := json.Marshal(urlobj.Header)
-			// fmt.Println(string(b))
+			elapsed := time.Since(start)
+
+			Payload := LogPayload{
+				DomainName:  strings.TrimSpace(url),
+				Headers:     urlobj.Header,
+				Sucessful:   true,
+				RequestTime: elapsed,
+			}
+			b, _ := json.Marshal(Payload)
+			resultsChan <- string(b)
+		} else {
+
+			fakeheaders := make(http.Header)
+			Payload := LogPayload{
+				DomainName:  strings.TrimSpace(url),
+				Headers:     fakeheaders,
+				Sucessful:   false,
+				RequestTime: 0,
+			}
+			b, _ := json.Marshal(Payload)
 			resultsChan <- string(b)
 		}
+
 	}
 
 }
