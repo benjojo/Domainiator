@@ -15,7 +15,7 @@ func worker(linkChan chan string, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for url := range linkChan {
-		urlobj, e := http.Get("http://" + url + ".com")
+		urlobj, e := http.Get("http://" + strings.TrimSpace(url) + ".com")
 		if e == nil {
 			b, _ := json.Marshal(urlobj.Header)
 			fmt.Println(string(b))
@@ -47,4 +47,3 @@ func main() {
 	close(lCh)
 	wg.Wait()
 }
-
