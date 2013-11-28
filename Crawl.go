@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 	"sync"
 	"time"
@@ -71,7 +72,8 @@ func Logger(resultChan chan LogPayload) {
 }
 
 func main() {
-	b, e := ioutil.ReadFile("./list.txt")
+
+	b, e := ioutil.ReadFile(os.Args[1])
 	if e != nil {
 		panic(e)
 	}
