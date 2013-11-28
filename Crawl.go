@@ -37,7 +37,7 @@ func main() {
 	wg := new(sync.WaitGroup)
 
 	// Adding routines to workgroup and running then
-	for i := 0; i < 30; i++ {
+	for i := 0; i < 300; i++ {
 		wg.Add(1)
 		go worker(lCh, wg)
 	}
