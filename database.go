@@ -13,5 +13,5 @@ func GetDB() (con *sql.DB, e error) {
 		fmt.Println("[DB] An error happened in the setup of a SQL connection")
 	}
 	con.Ping()
-	return err, con
+	return con, err
 }
