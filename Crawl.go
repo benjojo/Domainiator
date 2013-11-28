@@ -10,7 +10,7 @@ import (
 	// "time"
 )
 
-func worker(linkChan chan string, wg *sync.WaitGroup) {
+func worker(linkChan chan string, resultsChan chan string, wg *sync.WaitGroup) {
 	// Decreasing internal counter for wait-group as soon as goroutine finishes
 	defer wg.Done()
 
@@ -20,10 +20,18 @@ func worker(linkChan chan string, wg *sync.WaitGroup) {
 		fmt.Printf("BRB getting '%s'\n", formattedurl)
 		if e == nil {
 			b, _ := json.Marshal(urlobj.Header)
-			fmt.Println(string(b))
+			// fmt.Println(string(b))
+			resultsChan <- string(b)
 		}
 	}
 
+}
+
+func Logger(resultChan chan string) {
+	Database := GetDB()
+	for results := range resultChan {
+		fmt.Printf("BOOM %s", results)
+	}
 }
 
 func main() {
@@ -34,14 +42,15 @@ func main() {
 	File := strings.Split(string(b), "\n")
 
 	lCh := make(chan string)
+	rCh := make(chan string)
 	wg := new(sync.WaitGroup)
-
+	go Logger(rCh)
 	// Adding routines to workgroup and running then
 	for i := 0; i < 300; i++ {
 		wg.Add(1)
-		go worker(lCh, wg)
+		go worker(lCh, rCh, wg)
 	}
-
+	var results string
 	for _, link := range File {
 		lCh <- link
 	}
