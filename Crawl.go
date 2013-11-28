@@ -17,7 +17,7 @@ func worker(linkChan chan string, wg *sync.WaitGroup) {
 	for url := range linkChan {
 		urlobj, e := http.Get("http://" + url + ".com")
 		if e == nil {
-			b, e := json.Marshal(urlobj.Header)
+			b, _ := json.Marshal(urlobj.Header)
 			fmt.Println("%s", string(b))
 		}
 	}
@@ -25,7 +25,10 @@ func worker(linkChan chan string, wg *sync.WaitGroup) {
 }
 
 func main() {
-	b, e := ioutil.ReadAll("./list.txt")
+	b, e := ioutil.ReadFile("./list.txt")
+	if e != nil {
+		panic(e)
+	}
 	File := strings.Split(string(b), "\n")
 	// yourLinksSlice := make([]string, 50)
 	// for i := 0; i < 50; i++ {
