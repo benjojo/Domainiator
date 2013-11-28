@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -72,7 +73,7 @@ func Logger(resultChan chan LogPayload) {
 }
 
 func main() {
-
+	runtime.GOMAXPROCS(3)
 	b, e := ioutil.ReadFile(os.Args[1])
 	if e != nil {
 		panic(e)
@@ -84,7 +85,7 @@ func main() {
 	wg := new(sync.WaitGroup)
 	go Logger(rCh)
 	// Adding routines to workgroup and running then
-	for i := 0; i < 300; i++ {
+	for i := 0; i < 500; i++ {
 		wg.Add(1)
 		go worker(lCh, rCh, wg)
 	}
