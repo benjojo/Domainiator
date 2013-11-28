@@ -17,7 +17,7 @@ type LogPayload struct {
 	RequestTime time.Duration
 }
 
-func worker(linkChan chan string, resultsChan chan string, wg *sync.WaitGroup) {
+func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGroup) {
 	// Decreasing internal counter for wait-group as soon as goroutine finishes
 	defer wg.Done()
 
@@ -61,7 +61,6 @@ func Logger(resultChan chan LogPayload) {
 	}
 
 	for results := range resultChan {
-		fmt.Printf("BOOM %s", results)
 		b, _ := json.Marshal(results)
 		Database.Exec("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)", results.DomainName, string(b))
 	}
