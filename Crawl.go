@@ -16,7 +16,7 @@ func worker(linkChan chan string, wg *sync.WaitGroup) {
 
 	for url := range linkChan {
 		urlobj, e := http.Get("http://" + strings.TrimSpace(url) + ".com")
-		fmt.Sprintf("BRB getting '%s'", "http://"+strings.TrimSpace(url)+".com")
+		fmt.Printf("BRB getting '%s'", "http://"+strings.TrimSpace(url)+".com")
 		if e == nil {
 			b, _ := json.Marshal(urlobj.Header)
 			fmt.Println(string(b))
