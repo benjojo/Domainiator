@@ -36,6 +36,7 @@ func Logger(resultChan chan string) {
 
 	for results := range resultChan {
 		fmt.Printf("BOOM %s", results)
+		Database.Exec("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)", "test", results)
 	}
 }
 
@@ -55,7 +56,7 @@ func main() {
 		wg.Add(1)
 		go worker(lCh, rCh, wg)
 	}
-	var results string
+
 	for _, link := range File {
 		lCh <- link
 	}
