@@ -28,7 +28,10 @@ func worker(linkChan chan string, resultsChan chan string, wg *sync.WaitGroup) {
 }
 
 func Logger(resultChan chan string) {
-	Database := GetDB()
+	Database, e := GetDB()
+	if e != nil {
+		panic "Logger could not connect to the database"
+	}
 	for results := range resultChan {
 		fmt.Printf("BOOM %s", results)
 	}
