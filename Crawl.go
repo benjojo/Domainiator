@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"sync"
-	"time"
+	// "time"
 )
 
 func worker(linkChan chan string, wg *sync.WaitGroup) {
@@ -16,13 +16,17 @@ func worker(linkChan chan string, wg *sync.WaitGroup) {
 
 	for url := range linkChan {
 		urlobj, e := http.Get("http://" + url + ".com")
-		fmt.Println("%s", json.Marshal(urlobj.Header))
+		if e == nil {
+			b, e := json.Marshal(urlobj.Header)
+			fmt.Println("%s", string(b))
+		}
 	}
 
 }
 
 func main() {
-	File := strings.Split(string(ioutil.ReadAll("./list.txt")), "\n")
+	b, e := ioutil.ReadAll("./list.txt")
+	File := strings.Split(string(b), "\n")
 	// yourLinksSlice := make([]string, 50)
 	// for i := 0; i < 50; i++ {
 	// 	yourLinksSlice[i] = fmt.Sprintf("%d", i+1)
