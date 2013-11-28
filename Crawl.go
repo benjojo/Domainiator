@@ -35,8 +35,7 @@ func worker(linkChan chan string, resultsChan chan string, wg *sync.WaitGroup) {
 				Sucessful:   true,
 				RequestTime: elapsed,
 			}
-			b, _ := json.Marshal(Payload)
-			resultsChan <- string(b)
+			resultsChan <- Payload
 		} else {
 
 			fakeheaders := make(http.Header)
@@ -46,15 +45,15 @@ func worker(linkChan chan string, resultsChan chan string, wg *sync.WaitGroup) {
 				Sucessful:   false,
 				RequestTime: 0,
 			}
-			b, _ := json.Marshal(Payload)
-			resultsChan <- string(b)
+
+			resultsChan <- Payload
 		}
 
 	}
 
 }
 
-func Logger(resultChan chan string) {
+func Logger(resultChan chan LogPayload) {
 	Database, e := GetDB()
 
 	if e != nil {
@@ -63,7 +62,8 @@ func Logger(resultChan chan string) {
 
 	for results := range resultChan {
 		fmt.Printf("BOOM %s", results)
-		Database.Exec("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)", "test", results)
+		b, _ := json.Marshal(results)
+		Database.Exec("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)", results.DomainName, string(b))
 	}
 }
 
@@ -75,7 +75,7 @@ func main() {
 	File := strings.Split(string(b), "\n")
 
 	lCh := make(chan string)
-	rCh := make(chan string)
+	rCh := make(chan LogPayload)
 	wg := new(sync.WaitGroup)
 	go Logger(rCh)
 	// Adding routines to workgroup and running then
