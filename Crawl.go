@@ -14,7 +14,7 @@ type LogPayload struct {
 	Sucessful   bool
 	Headers     http.Header
 	DomainName  string
-	RequestTime int64
+	RequestTime time.Duration
 }
 
 func worker(linkChan chan string, resultsChan chan string, wg *sync.WaitGroup) {
