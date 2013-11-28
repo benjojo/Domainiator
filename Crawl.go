@@ -62,7 +62,9 @@ func Logger(resultChan chan LogPayload) {
 
 	for results := range resultChan {
 		b, _ := json.Marshal(results)
-		Database.Exec("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)", results.DomainName, string(b))
+		if results.Sucessful == true {
+			Database.Exec("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)", results.DomainName, string(b))
+		}
 	}
 }
 
