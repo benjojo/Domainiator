@@ -1,19 +1,26 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	"github.com/codegangsta/martini"
+	"github.com/pmylund/go-cache"
 	// "net/http"
+	"time"
 )
 
 func main() {
 	// Test if the database works.
+	fmt.Println("Dominiator FrontEnd Server. Attempting DB connection")
 	Database, e := GetDB()
 	if e != nil {
 		panic(e)
 	}
+	// Make a cache that all the general stats will be put in.
+	cacheobj := cache.New(60*time.Minute, 1*time.Minute)
+	fmt.Println("DB connection possible")
 	Database.Exec("SHOW TABLES")
 	// Okay so now we have a database connection.
 	m := martini.Classic()
+	m.Map(cacheobj) // ensure that the cache obj is delivered to each request
 	m.Run()
 }
