@@ -57,6 +57,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 
 func Logger(resultChan chan LogPayload) {
 	Database, e := GetDB()
+	Query, _ := Database.Prepare("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)")
 
 	if e != nil {
 		panic("Logger could not connect to the database")
@@ -65,9 +66,9 @@ func Logger(resultChan chan LogPayload) {
 	for results := range resultChan {
 		b, _ := json.Marshal(results)
 		if results.Sucessful == true {
-			Database.Exec("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)", results.DomainName, string(b))
+			Query.Exec(results.DomainName, string(b))
 		} else {
-			Database.Exec("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)", results.DomainName, "f")
+			Query.Exec(results.DomainName, "f")
 		}
 	}
 }
