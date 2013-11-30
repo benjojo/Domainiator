@@ -2,18 +2,17 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"github.com/codegangsta/martini"
 	"github.com/pmylund/go-cache"
 	"net/http"
-	"strings"
+	// "strings"
 )
 
 func SearchForDomains(res http.ResponseWriter, req *http.Request, cache *cache.Cache, prams martini.Params) string {
 	database, _ := GetDB()
 	defer database.Close()
-	var query string
-	if prams["q"] != nil {
+	if prams["q"] == "" {
 		http.Error(res, "No search query", http.StatusBadRequest)
 		return ""
 	}
@@ -23,8 +22,11 @@ func SearchForDomains(res http.ResponseWriter, req *http.Request, cache *cache.C
 	for rows.Next() {
 		var databack string
 		err := rows.Scan(&databack)
-		append(resultsArray, databack)
+		if err != nil {
+			http.Error(res, "Error reading from database", 500)
+		}
+		resultsArray = append(resultsArray, databack)
 	}
-	b, _ := json.Marshal(databack)
+	b, _ := json.Marshal(resultsArray)
 	return string(b)
 }
