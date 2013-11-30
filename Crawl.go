@@ -25,32 +25,38 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 	http.DefaultTransport.(*http.Transport).ResponseHeaderTimeout = time.Second * 15
 	for url := range linkChan {
 		start := time.Now()
+		// Construct the HTTP request, I have to go this the rather complex way because I want
+		// To add a useragent
 		formattedurl := fmt.Sprintf("http://%s.com/", strings.TrimSpace(url))
-		urlobj, e := http.Get(formattedurl)
-		// fmt.Printf("BRB getting '%s'\n", formattedurl)
-		if e == nil {
-			elapsed := time.Since(start)
+		req, err := http.NewRequest("GET", formattedurl, nil)
+		if err == nil {
+			client := &http.Client{}
+			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo (google benjojo)")
+			resp, e := client.Do(req)
 
-			Payload := LogPayload{
-				DomainName:  strings.TrimSpace(url),
-				Headers:     urlobj.Header,
-				Sucessful:   true,
-				RequestTime: elapsed,
+			if e == nil {
+				elapsed := time.Since(start)
+
+				Payload := LogPayload{
+					DomainName:  strings.TrimSpace(url),
+					Headers:     urlobj.Header,
+					Sucessful:   true,
+					RequestTime: elapsed,
+				}
+				resultsChan <- Payload
+			} else {
+
+				fakeheaders := make(http.Header)
+				Payload := LogPayload{
+					DomainName:  strings.TrimSpace(url),
+					Headers:     fakeheaders,
+					Sucessful:   false,
+					RequestTime: 0,
+				}
+
+				resultsChan <- Payload
 			}
-			resultsChan <- Payload
-		} else {
-
-			fakeheaders := make(http.Header)
-			Payload := LogPayload{
-				DomainName:  strings.TrimSpace(url),
-				Headers:     fakeheaders,
-				Sucessful:   false,
-				RequestTime: 0,
-			}
-
-			resultsChan <- Payload
 		}
-
 	}
 
 }
