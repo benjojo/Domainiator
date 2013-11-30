@@ -17,10 +17,12 @@ func main() {
 	}
 	// Make a cache that all the general stats will be put in.
 	cacheobj := cache.New(60*time.Minute, 1*time.Minute)
+
 	fmt.Println("DB connection possible")
 	Database.Exec("SHOW TABLES")
 	// Okay so now we have a database connection.
 	m := martini.Classic()
 	m.Map(cacheobj) // ensure that the cache obj is delivered to each request
+	m.Get("/api/search/:q", SearchForDomains)
 	m.Run()
 }
