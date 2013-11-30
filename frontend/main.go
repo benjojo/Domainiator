@@ -26,3 +26,9 @@ func main() {
 	m.Get("/api/search/:q", SearchForDomains)
 	m.Run()
 }
+
+func API2JSON(res http.ResponseWriter, req *http.Request) {
+	if strings.HasPrefix(req.RequestURI, "/api") { // This causes anything with a /api prefix to have the content type of json.
+		res.Header().Set("Content-Type", "application/json")
+	}
+}

@@ -9,12 +9,12 @@ import (
 	"strings"
 )
 
-func SearchForDomains(rw http.ResponseWriter, req *http.Request, cache *cache.Cache, prams martini.Params) string {
+func SearchForDomains(res http.ResponseWriter, req *http.Request, cache *cache.Cache, prams martini.Params) string {
 	database, _ := GetDB()
 	defer database.Close()
 	var query string
 	if prams["q"] != nil {
-		http.Error(rw, "No search query", http.StatusBadRequest)
+		http.Error(res, "No search query", http.StatusBadRequest)
 		return ""
 	}
 	rows, _ := database.Query("SELECT Domain FROM `Domaniator`.`Results` WHERE Domain LIKE ? AND `Data` != 'f' LIMIT 10", prams["q"]+"%")
