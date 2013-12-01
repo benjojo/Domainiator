@@ -25,6 +25,7 @@ func main() {
 	m := martini.Classic()
 	m.Map(cacheobj) // ensure that the cache obj is delivered to each request
 	m.Get("/api/search/:q", SearchForDomains)
+	m.Get("/api/stats/", GetOverviewStats)
 	m.Run()
 }
 
