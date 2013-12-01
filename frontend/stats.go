@@ -30,3 +30,31 @@ func SearchForDomains(res http.ResponseWriter, req *http.Request, cache *cache.C
 	b, _ := json.Marshal(resultsArray)
 	return string(b)
 }
+
+type StatsResponce struct {
+	RequestCount   int64
+	FailedCount    int64
+	TopHeaders     string
+	AvgContentSize int64
+}
+
+func GetOverviewStats(res http.ResponseWriter, req *http.Request, cache *cache.Cache, prams martini.Params) string {
+	database, _ := GetDB()
+	defer database.Close()
+
+	var RequestCount int64
+	var FailedCount int64
+	var TopHeaders string
+	var AvgContentSize int64
+	row := database.QueryRow("SELECT  `RequestCount`,  `FailedCount`,  `TopHeaders`,  `AvgContentSize` FROM `Domaniator`.`CachedResults` ORDER BY `Day` DESC LIMIT 1")
+	row.Scan(&RequestCount, &FailedCount, &TopHeaders, &AvgContentSize)
+
+	Result := StatsResponce{
+		RequestCount:   RequestCount,
+		FailedCount:    FailedCount,
+		TopHeaders:     TopHeaders,
+		AvgContentSize: AvgContentSize,
+	}
+	b, _ := json.Marshal(Result)
+	return string(b)
+}
