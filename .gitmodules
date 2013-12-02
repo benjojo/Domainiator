@@ -1,0 +1,3 @@
+[submodule "frontend/public"]
+	path = frontend/public
+	url = git@github.com:benjojo/Domainiator_frontend.git
