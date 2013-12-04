@@ -92,7 +92,7 @@ func main() {
 	wg := new(sync.WaitGroup)
 	go Logger(rCh)
 	// Adding routines to workgroup and running then
-	for i := 0; i < 500; i++ {
+	for i := 0; i < 600; i++ {
 		wg.Add(1)
 		go worker(lCh, rCh, wg)
 	}
