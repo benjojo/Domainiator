@@ -88,7 +88,7 @@ func main() {
 	File := strings.Split(string(b), "\n")
 
 	lCh := make(chan string)
-	rCh := make(chan LogPayload)
+	rCh := make(chan LogPayload,100)
 	wg := new(sync.WaitGroup)
 	go Logger(rCh)
 	// Adding routines to workgroup and running then
