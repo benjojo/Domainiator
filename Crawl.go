@@ -10,6 +10,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"errors"
 )
 
 type LogPayload struct {
@@ -33,7 +34,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 			client := &http.Client{}
 			client.CheckRedirect =
 		                func(req *http.Request, via []*http.Request) error {
-		                	e := make(error,0)
+		                	e := errors.New("can't go here because of golang bug")
 		                	return e
 		                }
 			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo (google benjojo) https://github.com/benjojo/Domainiator")
