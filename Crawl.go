@@ -33,7 +33,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 			client := &http.Client{}
 			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo (google benjojo)")
 			urlobj, e := client.Do(req)
-
+			ioutil.ReadAll(urlobj.Body)
 			if e == nil {
 				elapsed := time.Since(start)
 
