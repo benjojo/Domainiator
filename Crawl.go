@@ -31,7 +31,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		req, err := http.NewRequest("GET", formattedurl, nil)
 		if err == nil {
 			client := &http.Client{}
-			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo (google benjojo)")
+			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo (google benjojo) https://github.com/benjojo/Domainiator")
 			urlobj, e := client.Do(req)
 			ioutil.ReadAll(urlobj.Body)
 			if e == nil {
