@@ -31,6 +31,11 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		req, err := http.NewRequest("GET", formattedurl, nil)
 		if err == nil {
 			client := &http.Client{}
+			client.CheckRedirect =
+		                func(req *http.Request, via []*http.Request) error {
+		                	e := make(error,0)
+		                	return e
+		                }
 			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo (google benjojo) https://github.com/benjojo/Domainiator")
 			urlobj, e := client.Do(req)
 			ioutil.ReadAll(urlobj.Body)
