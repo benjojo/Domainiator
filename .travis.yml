@@ -11,4 +11,7 @@ before_install:
   - cat Layout.sql | mysql
   
 
-script: go build
+script:
+  - go build
+  - ./Domainiator list.txt
+  - mysql -e "SELECT * FROM Domaniator.Results"
