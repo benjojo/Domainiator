@@ -15,3 +15,6 @@ script:
   - go build
   - ./Domainiator list.txt
   - mysql -e "SELECT * FROM Domaniator.Results"
+  - cd cron
+  - go build
+  - ./cron
