@@ -6,9 +6,9 @@ go:
   - tip
 
 before_install:
-  go get
-  mysql -e 'create database Domaniator;'
-  cat Layout.sql | mysql
+  - go get
+  - mysql -e 'create database Domaniator;'
+  - cat Layout.sql | mysql
   
 
 script: go build
