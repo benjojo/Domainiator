@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 func main() {
@@ -15,11 +16,15 @@ func main() {
 
 	var rowcount int
 	database.QueryRow("SELECT `id` FROM `Results` ORDER BY `id` DESC LIMIT 1").Scan(&rowcount)
-	/*
-		Infact hold on,I might just grab the top ID count and work with that in batches of 10k
-		that way I won't be using LIMIT (Known to be nearly the worse thing added to MySQL) and
-		I will (hopefully) be rolling in performance
-	*/
+	fmt.Printf("There are %d rows, I will start scanning though them 10,000 at a time\n", rowcount)
+	// Now I need to test how long this is going to take by doing the most legit way of testing this...
+	prestart := time.Now()
 
-	fmt.Printf("There are %d rows, I will start scanning though them 10,000 at a time", rowcount)
+	// Do the complex query mid way though the result set.
+	// This will give us a rough idea how long it will take...
+	database.QueryRow("SELECT SUM(LENGTH(`Data`)) FROM `Results` WHERE id > (94605236/2) AND id < (94605236/2) + 1001")
+
+	timetaken := time.Since(prestart)
+
+	fmt.Printf("Highly optomistic estimation is %f mins or %f Hours\n", timetaken.Minutes()*float64(rowcount), timetaken.Hours()*float64(rowcount))
 }
