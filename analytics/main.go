@@ -26,5 +26,6 @@ func main() {
 
 	timetaken := time.Since(prestart)
 
-	fmt.Printf("Highly optomistic estimation is %f mins or %f Hours\n", timetaken.Minutes()*float64(rowcount), timetaken.Hours()*float64(rowcount))
+	fmt.Printf("Highly optomistic estimation is %f mins or %f Hours\n", timetaken.Minutes()*float64(rowcount/1000), timetaken.Hours()*float64(rowcount/1000))
+
 }
