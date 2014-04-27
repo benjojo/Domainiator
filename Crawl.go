@@ -24,6 +24,8 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 	// Decreasing internal counter for wait-group as soon as goroutine finishes
 	defer wg.Done()
 	http.DefaultTransport.(*http.Transport).ResponseHeaderTimeout = time.Second * 15
+	http.DefaultTransport.(*http.Transport).DisableKeepAlives = true
+
 	for url := range linkChan {
 		start := time.Now()
 		// Construct the HTTP request, I have to go this the rather complex way because I want
