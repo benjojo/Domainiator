@@ -17,6 +17,7 @@ import (
 type LogPayload struct {
 	Sucessful   bool
 	Headers     http.Header
+	DNSIP       string
 	DomainName  string
 	RequestTime time.Duration
 }
@@ -57,6 +58,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 					DomainName:  strings.TrimSpace(url),
 					Headers:     urlobj.Header,
 					Sucessful:   true,
+					DNSIP:       ip[0].String(),
 					RequestTime: elapsed,
 				}
 				resultsChan <- Payload
