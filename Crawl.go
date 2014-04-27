@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -10,7 +11,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"errors"
 )
 
 type LogPayload struct {
@@ -33,10 +33,10 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		if err == nil {
 			client := &http.Client{}
 			client.CheckRedirect =
-		                func(req *http.Request, via []*http.Request) error {
-		                	e := errors.New("can't go here because of golang bug")
-		                	return e
-		                }
+				func(req *http.Request, via []*http.Request) error {
+					e := errors.New("can't go here because of golang bug")
+					return e
+				}
 			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo (google benjojo) https://github.com/benjojo/Domainiator")
 			urlobj, e := client.Do(req)
 			// ioutil.ReadAll(urlobj.Body)
@@ -94,7 +94,7 @@ func main() {
 	File := strings.Split(string(b), "\n")
 
 	lCh := make(chan string)
-	rCh := make(chan LogPayload,100)
+	rCh := make(chan LogPayload, 100)
 	wg := new(sync.WaitGroup)
 	go Logger(rCh)
 	// Adding routines to workgroup and running then
