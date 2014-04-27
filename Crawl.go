@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"os"
 	"runtime"
@@ -40,6 +41,13 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 					return e
 				}
 			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo +https://github.com/benjojo/Domainiator")
+
+			// Avoid calling our own loopback, or calling on anything that does not have
+			// DNS responce.
+			ip, err := net.LookupIP(fmt.Sprintf("%s.com", strings.TrimSpace(url)))
+			if err != nil || len(ip) < 1 || strings.HasPrefix("127.", ip[0].String()) {
+				continue
+			}
 			urlobj, e := client.Do(req)
 			// ioutil.ReadAll(urlobj.Body)
 			if e == nil {
