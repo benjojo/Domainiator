@@ -37,7 +37,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 					e := errors.New("can't go here because of golang bug")
 					return e
 				}
-			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo (google benjojo) https://github.com/benjojo/Domainiator")
+			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo +https://github.com/benjojo/Domainiator")
 			urlobj, e := client.Do(req)
 			// ioutil.ReadAll(urlobj.Body)
 			if e == nil {
