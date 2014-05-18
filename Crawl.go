@@ -59,7 +59,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 			// ioutil.ReadAll(urlobj.Body)
 			if e == nil {
 				elapsed := time.Since(start)
-				if *saveoutput && urlobj.Status == 200 {
+				if *saveoutput && urlobj.StatusCode == 200 {
 					b, e := ioutil.ReadAll(urlobj.Body)
 					if e == nil {
 						ioutil.WriteFile(fmt.Sprintf("./%s/%s.%s", strings.TrimSpace(url)[0], strings.TrimSpace(url), *pathtoquery), b, 744)
