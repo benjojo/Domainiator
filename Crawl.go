@@ -38,7 +38,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 			tld = ".com"
 		}
 
-		formattedurl := fmt.Sprintf("http://%s%s%s", strings.TrimSpace(url), *pathtoquery)
+		formattedurl := fmt.Sprintf("http://%s%s%s", strings.TrimSpace(url), tld, *pathtoquery)
 		req, err := http.NewRequest("GET", formattedurl, nil)
 		if err == nil {
 			client := &http.Client{}
