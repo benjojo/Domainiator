@@ -13,7 +13,7 @@ before_install:
 
 script:
   - go build
-  - ./Domainiator list.txt
+  - ./Domainiator -input list.txt
   - mysql -e "SELECT * FROM Domaniator.Results"
   - cd cron
   - go build
