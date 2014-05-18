@@ -3,11 +3,11 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
-	"os"
 	"runtime"
 	"strings"
 	"sync"
@@ -32,7 +32,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		start := time.Now()
 		// Construct the HTTP request, I have to go this the rather complex way because I want
 		// To add a useragent
-		formattedurl := fmt.Sprintf("http://%s.com/", strings.TrimSpace(url))
+		formattedurl := fmt.Sprintf("http://%s.com/%s", strings.TrimSpace(url), *pathtoquery)
 		req, err := http.NewRequest("GET", formattedurl, nil)
 		if err == nil {
 			client := &http.Client{}
@@ -97,9 +97,14 @@ func Logger(resultChan chan LogPayload) {
 	}
 }
 
+var pathtoquery *string
+
 func main() {
 	runtime.GOMAXPROCS(3)
-	b, e := ioutil.ReadFile(os.Args[1])
+	inputfile := flag.String("input", "", "The file that will be read.")
+	pathtoquery = flag.String("querypath", "/", "The path that will be queried.")
+	flag.Parse()
+	b, e := ioutil.ReadFile(*inputfile)
 	if e != nil {
 		panic(e)
 	}
