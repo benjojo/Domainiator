@@ -33,7 +33,12 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		start := time.Now()
 		// Construct the HTTP request, I have to go this the rather complex way because I want
 		// To add a useragent
-		formattedurl := fmt.Sprintf("http://%s.com%s", strings.TrimSpace(url), *pathtoquery)
+		tld := ""
+		if *presumecom {
+			tld = ".com"
+		}
+
+		formattedurl := fmt.Sprintf("http://%s%s%s", strings.TrimSpace(url), *pathtoquery)
 		req, err := http.NewRequest("GET", formattedurl, nil)
 		if err == nil {
 			client := &http.Client{}
@@ -106,6 +111,7 @@ func Logger(resultChan chan LogPayload) {
 
 var pathtoquery *string
 var saveoutput *bool
+var presumecom *bool
 var databasestring *string
 
 func main() {
@@ -113,7 +119,9 @@ func main() {
 	inputfile := flag.String("input", "", "The file that will be read.")
 	pathtoquery = flag.String("querypath", "/", "The path that will be queried.")
 	saveoutput = flag.Bool("savepage", false, "Save the file that is downloaded to disk")
+	presumecom = flag.Bool("presumecom", true, "Presume that the file lines need .com adding to them")
 	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
+	databasestring = flag.String("dbstring", "root:@tcp(127.0.0.1:3306)/Domaniator", "What to connect to the database with")
 	databasestring = flag.String("dbstring", "root:@tcp(127.0.0.1:3306)/Domaniator", "What to connect to the database with")
 
 	flag.Parse()
