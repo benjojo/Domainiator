@@ -51,7 +51,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 
 			// Avoid calling our own loopback, or calling on anything that does not have
 			// DNS responce.
-			ip, err := net.LookupIP(fmt.Sprintf("%s.com", strings.TrimSpace(url)))
+			ip, err := net.LookupIP(fmt.Sprintf("%s%s", strings.TrimSpace(url), tld))
 			if err != nil || len(ip) < 1 || strings.HasPrefix("127.", ip[0].String()) || strings.HasPrefix("0.", ip[0].String()) {
 				continue
 			}
