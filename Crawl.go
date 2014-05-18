@@ -33,7 +33,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		start := time.Now()
 		// Construct the HTTP request, I have to go this the rather complex way because I want
 		// To add a useragent
-		formattedurl := fmt.Sprintf("http://%s.com/%s", strings.TrimSpace(url), *pathtoquery)
+		formattedurl := fmt.Sprintf("http://%s.com%s", strings.TrimSpace(url), *pathtoquery)
 		req, err := http.NewRequest("GET", formattedurl, nil)
 		if err == nil {
 			client := &http.Client{}
