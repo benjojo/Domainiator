@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 	"runtime"
 	"strings"
 	"sync"
@@ -103,7 +104,14 @@ func main() {
 	runtime.GOMAXPROCS(3)
 	inputfile := flag.String("input", "", "The file that will be read.")
 	pathtoquery = flag.String("querypath", "/", "The path that will be queried.")
+	saveoutput = flag.Bool("savepage", false, "Save the file that is downloaded to disk")
 	flag.Parse()
+
+	if *inputfile == "" {
+		fmt.Println("No input file, put one in with -input")
+		os.Exit(0)
+	}
+
 	b, e := ioutil.ReadFile(*inputfile)
 	if e != nil {
 		panic(e)
