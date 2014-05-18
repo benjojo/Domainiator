@@ -105,6 +105,7 @@ func Logger(resultChan chan LogPayload) {
 
 var pathtoquery *string
 var saveoutput *bool
+var databasestring *string
 
 func main() {
 	runtime.GOMAXPROCS(3)
@@ -112,6 +113,8 @@ func main() {
 	pathtoquery = flag.String("querypath", "/", "The path that will be queried.")
 	saveoutput = flag.Bool("savepage", false, "Save the file that is downloaded to disk")
 	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
+	databasestring = flag.String("dbstring", "root:@tcp(127.0.0.1:3306)/Domaniator", "What to connect to the database with")
+
 	flag.Parse()
 
 	if *inputfile == "" {
