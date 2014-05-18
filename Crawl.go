@@ -111,6 +111,7 @@ func main() {
 	inputfile := flag.String("input", "", "The file that will be read.")
 	pathtoquery = flag.String("querypath", "/", "The path that will be queried.")
 	saveoutput = flag.Bool("savepage", false, "Save the file that is downloaded to disk")
+	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
 	flag.Parse()
 
 	if *inputfile == "" {
@@ -129,7 +130,7 @@ func main() {
 	wg := new(sync.WaitGroup)
 	go Logger(rCh)
 	// Adding routines to workgroup and running then
-	for i := 0; i < 600; i++ {
+	for i := 0; i < *concurrencycount; i++ {
 		wg.Add(1)
 		go worker(lCh, rCh, wg)
 	}
