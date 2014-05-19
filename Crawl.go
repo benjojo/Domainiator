@@ -47,7 +47,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 					e := errors.New("can't go here because of golang bug")
 					return e
 				}
-			req.Header.Set("User-Agent", "HTTP Header Survey By Benjojo +https://github.com/benjojo/Domainiator")
+			req.Header.Set("User-Agent", *useragent)
 
 			// Avoid calling our own loopback, or calling on anything that does not have
 			// DNS responce.
@@ -114,6 +114,7 @@ var pathtoquery *string
 var saveoutput *bool
 var presumecom *bool
 var databasestring *string
+var useragent *string
 
 func main() {
 	runtime.GOMAXPROCS(3)
@@ -123,6 +124,7 @@ func main() {
 	presumecom = flag.Bool("presumecom", true, "Presume that the file lines need .com adding to them")
 	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
 	databasestring = flag.String("dbstring", "root:@tcp(127.0.0.1:3306)/Domaniator", "What to connect to the database with")
+	useragent = flag.String("ua", "HTTP Header Survey By Benjojo +https://github.com/benjojo/Domainiator", "What UA to send the request with")
 
 	flag.Parse()
 
