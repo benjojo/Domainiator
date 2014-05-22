@@ -58,7 +58,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 			}
 			urlobj, e := client.Do(req)
 			// ioutil.ReadAll(urlobj.Body)
-			if e == nil {
+			if e == nil || urlobj != nil {
 				elapsed := time.Since(start)
 				if *saveoutput && urlobj.StatusCode == 200 {
 					b, e := ioutil.ReadAll(urlobj.Body)
