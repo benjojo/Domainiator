@@ -112,7 +112,7 @@ func Logger(resultChan chan LogPayload) {
 		b, e := json.Marshal(results)
 
 		if results.Sucessful == true && e != nil {
-			e = Query.Exec(results.DomainName, string(b))
+			_, e = Query.Exec(results.DomainName, string(b))
 			if e != nil {
 				fmt.Printf("Could not store data for domain %s", results.DomainName)
 			}
@@ -120,7 +120,7 @@ func Logger(resultChan chan LogPayload) {
 			if e != nil {
 				fmt.Println("Could not JSON encode packet")
 			}
-			e = Query.Exec(results.DomainName, "f")
+			_, e = Query.Exec(results.DomainName, "f")
 			if e != nil {
 				fmt.Printf("Could not store data for domain %s", results.DomainName)
 			}
