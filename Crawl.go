@@ -97,7 +97,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 
 func Logger(resultChan chan LogPayload) {
 	Database, e := GetDB()
-	Query, _ := Database.Prepare("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)")
+	Query, _ := Database.Prepare("INSERT INTO `Results` (`Domain`, `Data`) VALUES (?, ?)")
 
 	if e != nil {
 		panic("Logger could not connect to the database")
