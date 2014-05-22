@@ -111,7 +111,7 @@ func Logger(resultChan chan LogPayload) {
 	for results := range resultChan {
 		b, e := json.Marshal(results)
 
-		if results.Sucessful == true && e != nil {
+		if results.Sucessful == true && e == nil {
 			_, e = Query.Exec(results.DomainName, string(b))
 			if e != nil {
 				fmt.Printf("Could not store data for domain %s for reason: %s\n", results.DomainName, e.Error())
