@@ -114,7 +114,7 @@ func Logger(resultChan chan LogPayload) {
 		if results.Sucessful == true && e != nil {
 			_, e = Query.Exec(results.DomainName, string(b))
 			if e != nil {
-				fmt.Printf("Could not store data for domain %s", results.DomainName)
+				fmt.Printf("Could not store data for domain %s for reason: %s\n", results.DomainName, e.Error())
 			}
 		} else {
 			if e != nil {
@@ -122,7 +122,7 @@ func Logger(resultChan chan LogPayload) {
 			}
 			_, e = Query.Exec(results.DomainName, "f")
 			if e != nil {
-				fmt.Printf("Could not store data for domain %s", results.DomainName)
+				fmt.Printf("Could not store data for domain %s for reason: %s\n", results.DomainName, e.Error())
 			}
 		}
 	}
