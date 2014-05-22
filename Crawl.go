@@ -90,7 +90,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 					Sucessful:   false,
 					DNSIP:       "",
 					RequestTime: 0,
-					StatusCode:  urlobj.StatusCode,
+					StatusCode:  0,
 				}
 
 				resultsChan <- Payload
