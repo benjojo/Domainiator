@@ -21,6 +21,7 @@ type LogPayload struct {
 	DNSIP       string
 	DomainName  string
 	RequestTime time.Duration
+	StatusCode  int
 }
 
 func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGroup) {
@@ -73,6 +74,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 					Sucessful:   true,
 					DNSIP:       ip[0].String(),
 					RequestTime: elapsed,
+					StatusCode:  urlobj.StatusCode,
 				}
 				resultsChan <- Payload
 			} else {
@@ -83,6 +85,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 					Headers:     fakeheaders,
 					Sucessful:   false,
 					RequestTime: 0,
+					StatusCode:  urlobj.StatusCode,
 				}
 
 				resultsChan <- Payload
