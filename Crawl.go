@@ -39,7 +39,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 			tld = ".com"
 		}
 
-		formattedurl := fmt.Sprintf("http://%s%s%s", strings.TrimSpace(url), tld, *pathtoquery)
+		formattedurl := fmt.Sprintf("http://%s%s/%s", strings.TrimSpace(url), tld, *pathtoquery)
 		req, err := http.NewRequest("GET", formattedurl, nil)
 		if err == nil {
 			client := &http.Client{}
@@ -122,7 +122,7 @@ var useragent *string
 func main() {
 	runtime.GOMAXPROCS(3)
 	inputfile := flag.String("input", "", "The file that will be read.")
-	pathtoquery = flag.String("querypath", "/", "The path that will be queried.")
+	pathtoquery = flag.String("querypath", "", "The path that will be queried. (Default is root dir)")
 	saveoutput = flag.Bool("savepage", false, "Save the file that is downloaded to disk")
 	presumecom = flag.Bool("presumecom", true, "Presume that the file lines need .com adding to them")
 	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
