@@ -64,7 +64,11 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 					b, e := ioutil.ReadAll(urlobj.Body)
 					if e == nil {
 						os.Mkdir(fmt.Sprintf("./%s", string(strings.TrimSpace(url)[0])), 744)
-						ioutil.WriteFile(fmt.Sprintf("./%s/%s.%s", string(strings.TrimSpace(url)[0]), strings.TrimSpace(url), *pathtoquery), b, 744)
+						filename := fmt.Sprintf("./%s/%s.%s", string(strings.TrimSpace(url)[0]), strings.TrimSpace(url), *pathtoquery)
+						e = ioutil.WriteFile(filename, b, 744)
+						if e != nil {
+							fmt.Printf("Unable to save file %s\n", filename)
+						}
 					}
 				}
 
