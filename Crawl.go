@@ -109,11 +109,21 @@ func Logger(resultChan chan LogPayload) {
 	}
 
 	for results := range resultChan {
-		b, _ := json.Marshal(results)
-		if results.Sucessful == true {
-			Query.Exec(results.DomainName, string(b))
+		b, e := json.Marshal(results)
+
+		if results.Sucessful == true && e != nil {
+			e = Query.Exec(results.DomainName, string(b))
+			if e != nil {
+				fmt.Printf("Could not store data for domain %s", results.DomainName)
+			}
 		} else {
-			Query.Exec(results.DomainName, "f")
+			if e != nil {
+				fmt.Println("Could not JSON encode packet")
+			}
+			e = Query.Exec(results.DomainName, "f")
+			if e != nil {
+				fmt.Printf("Could not store data for domain %s", results.DomainName)
+			}
 		}
 	}
 }
