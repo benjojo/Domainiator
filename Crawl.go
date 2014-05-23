@@ -143,7 +143,7 @@ func main() {
 	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
 	databasestring = flag.String("dbstring", "root:@tcp(127.0.0.1:3306)/Domaniator", "What to connect to the database with")
 	useragent = flag.String("ua", "HTTP Header Survey By Benjojo +https://github.com/benjojo/Domainiator", "What UA to send the request with")
-	logbuffer = flag.Int("logbuffer", 100, "How many logging entries should be buffered before blocking")
+	logbuffer := flag.Int("logbuffer", 100, "How many logging entries should be buffered before blocking")
 
 	flag.Parse()
 
