@@ -139,7 +139,7 @@ func main() {
 	inputfile := flag.String("input", "", "The file that will be read.")
 	pathtoquery = flag.String("querypath", "", "The path that will be queried. (Default is root dir)")
 	saveoutput = flag.Bool("savepage", false, "Save the file that is downloaded to disk")
-	presumecom = flag.Bool("presumecom", true, "Presume that the file lines need .com adding to them")
+	presumecom = flag.Bool("presumecom", false, "Presume that the file lines need .com adding to them")
 	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
 	databasestring = flag.String("dbstring", "root:@tcp(127.0.0.1:3306)/Domaniator", "What to connect to the database with")
 	useragent = flag.String("ua", "HTTP Header Survey By Benjojo +https://github.com/benjojo/Domainiator", "What UA to send the request with")
