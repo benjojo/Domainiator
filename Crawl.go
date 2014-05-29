@@ -39,7 +39,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 			tld = ".com"
 		}
 
-		formattedurl := fmt.Sprintf("http://%s%s/%s", strings.TrimSpace(url), tld, *pathtoquery)
+		formattedurl := fmt.Sprintf("%s://%s%s/%s", *protocal, strings.TrimSpace(url), tld, *pathtoquery)
 		req, err := http.NewRequest("GET", formattedurl, nil)
 		if err == nil {
 			client := &http.Client{}
@@ -133,6 +133,7 @@ var saveoutput *bool
 var presumecom *bool
 var databasestring *string
 var useragent *string
+var protocal *string
 
 func main() {
 	runtime.GOMAXPROCS(3)
@@ -143,6 +144,7 @@ func main() {
 	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
 	databasestring = flag.String("dbstring", "root:@tcp(127.0.0.1:3306)/Domaniator", "What to connect to the database with")
 	useragent = flag.String("ua", "HTTP Header Survey By Benjojo +https://github.com/benjojo/Domainiator", "What UA to send the request with")
+	protocal = flag.String("protocal", "http", "http or https")
 	logbuffer := flag.Int("logbuffer", 100, "How many logging entries should be buffered before blocking")
 
 	flag.Parse()
