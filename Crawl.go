@@ -131,7 +131,7 @@ func main() {
 	presumecom = flag.Bool("presumecom", true, "Presume that the file lines need .com adding to them")
 	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
 	databasestring = flag.String("dbstring", "root:@tcp(127.0.0.1:3306)/Domaniator", "What to connect to the database with")
-	useragent = flag.String("ua", "HTTP Header Survey By Benjojo +https://github.com/benjojo/Domainiator", "What UA to send the request with")
+	useragent = flag.String("ua", "Mozilla/5.0 (HTTP Header Survey By Benjojo +https://github.com/benjojo/Domainiator) (Like elinks)", "What UA to send the request with")
 
 	flag.Parse()
 
