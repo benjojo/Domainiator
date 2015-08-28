@@ -51,7 +51,10 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		client := &http.Client{}
 		client.CheckRedirect =
 			func(req *http.Request, via []*http.Request) error {
-				e := errors.New("can't go here because of golang bug")
+				if strings.Contains(req.Header.Get("Location"), "https") {
+					return nil
+				}
+				e := errors.New("Will not follow redirects due to golang issues")
 				return e
 			}
 		req.Header.Set("User-Agent", *useragent)
@@ -127,7 +130,7 @@ func main() {
 	runtime.GOMAXPROCS(3)
 	inputfile := flag.String("input", "", "The file that will be read.")
 	pathtoquery = flag.String("querypath", "/", "The path that will be queried.")
-	saveoutput = flag.Bool("savepage", false, "Save the file that is downloaded to disk")
+	saveoutput = flag.Bool("savepage", false, "Save the file that is queried to disk")
 	presumecom = flag.Bool("presumecom", true, "Presume that the file lines need .com adding to them")
 	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
 	databasestring = flag.String("dbstring", "root:@tcp(127.0.0.1:3306)/Domaniator", "What to connect to the database with")
