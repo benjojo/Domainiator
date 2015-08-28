@@ -19,6 +19,7 @@ type LogPayload struct {
 	Sucessful   bool
 	Headers     http.Header
 	DNSIP       string
+	FailReason  string
 	DomainName  string
 	RequestTime time.Duration
 	StatusCode  int
@@ -90,7 +91,9 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 				DomainName:  strings.TrimSpace(url),
 				Headers:     fakeheaders,
 				Sucessful:   false,
+				DNSIP:       ip[0].String(),
 				RequestTime: 0,
+				FailReason:  err.Error(),
 				StatusCode:  urlobj.StatusCode,
 			}
 
@@ -110,11 +113,7 @@ func Logger(resultChan chan LogPayload) {
 
 	for results := range resultChan {
 		b, _ := json.Marshal(results)
-		if results.Sucessful == true {
-			Query.Exec(results.DomainName, string(b))
-		} else {
-			Query.Exec(results.DomainName, "f")
-		}
+		Query.Exec(results.DomainName, string(b))
 	}
 }
 
