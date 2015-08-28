@@ -41,55 +41,61 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 
 		formattedurl := fmt.Sprintf("http://%s%s%s", strings.TrimSpace(url), tld, *pathtoquery)
 		req, err := http.NewRequest("GET", formattedurl, nil)
-		if err == nil {
-			client := &http.Client{}
-			client.CheckRedirect =
-				func(req *http.Request, via []*http.Request) error {
-					e := errors.New("can't go here because of golang bug")
-					return e
-				}
-			req.Header.Set("User-Agent", *useragent)
 
-			// Avoid calling our own loopback, or calling on anything that does not have
-			// DNS responce.
-			ip, err := net.LookupIP(fmt.Sprintf("%s%s", strings.TrimSpace(url), tld))
-			if err != nil || len(ip) < 1 || strings.HasPrefix("127.", ip[0].String()) || strings.HasPrefix("0.", ip[0].String()) {
-				continue
+		if err != nil {
+			fmt.Printf("Issue with URL provided, %s makes no sence to net/url\n", formattedurl)
+			continue
+		}
+
+		client := &http.Client{}
+		client.CheckRedirect =
+			func(req *http.Request, via []*http.Request) error {
+				e := errors.New("can't go here because of golang bug")
+				return e
 			}
-			urlobj, e := client.Do(req)
-			// ioutil.ReadAll(urlobj.Body)
-			if e == nil {
-				elapsed := time.Since(start)
-				if *saveoutput && urlobj.StatusCode == 200 {
-					b, e := ioutil.ReadAll(urlobj.Body)
-					if e == nil {
-						os.Mkdir(fmt.Sprintf("./%s", strings.TrimSpace(url)[0]), 744)
-						ioutil.WriteFile(fmt.Sprintf("./%s/%s.%s", strings.TrimSpace(url)[0], strings.TrimSpace(url), *pathtoquery), b, 744)
-					}
-				}
+		req.Header.Set("User-Agent", *useragent)
 
-				Payload := LogPayload{
-					DomainName:  strings.TrimSpace(url),
-					Headers:     urlobj.Header,
-					Sucessful:   true,
-					DNSIP:       ip[0].String(),
-					RequestTime: elapsed,
-					StatusCode:  urlobj.StatusCode,
+		// Avoid calling our own loopback, or calling on anything that does not have
+		// DNS responce.
+		ip, err := net.LookupIP(fmt.Sprintf("%s%s", strings.TrimSpace(url), tld))
+		if err != nil || len(ip) < 1 || strings.HasPrefix("127.", ip[0].String()) || strings.HasPrefix("0.", ip[0].String()) {
+			continue
+		}
+		urlobj, e := client.Do(req)
+		// ioutil.ReadAll(urlobj.Body)
+		if e == nil {
+			elapsed := time.Since(start)
+			if *saveoutput && urlobj.StatusCode == 200 {
+				b, e := ioutil.ReadAll(urlobj.Body)
+				if e == nil {
+					os.Mkdir(fmt.Sprintf("./%s", strings.TrimSpace(url)[0]), 744)
+					ioutil.WriteFile(fmt.Sprintf("./%s/%s.%s", strings.TrimSpace(url)[0], strings.TrimSpace(url), *pathtoquery), b, 744)
 				}
-				resultsChan <- Payload
 			} else {
-
-				fakeheaders := make(http.Header)
-				Payload := LogPayload{
-					DomainName:  strings.TrimSpace(url),
-					Headers:     fakeheaders,
-					Sucessful:   false,
-					RequestTime: 0,
-					StatusCode:  urlobj.StatusCode,
-				}
-
-				resultsChan <- Payload
+				urlobj.Body.Close()
 			}
+
+			Payload := LogPayload{
+				DomainName:  strings.TrimSpace(url),
+				Headers:     urlobj.Header,
+				Sucessful:   true,
+				DNSIP:       ip[0].String(),
+				RequestTime: elapsed,
+				StatusCode:  urlobj.StatusCode,
+			}
+			resultsChan <- Payload
+		} else {
+
+			fakeheaders := make(http.Header)
+			Payload := LogPayload{
+				DomainName:  strings.TrimSpace(url),
+				Headers:     fakeheaders,
+				Sucessful:   false,
+				RequestTime: 0,
+				StatusCode:  urlobj.StatusCode,
+			}
+
+			resultsChan <- Payload
 		}
 	}
 
