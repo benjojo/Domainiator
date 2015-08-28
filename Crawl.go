@@ -51,10 +51,14 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		client := &http.Client{}
 		client.CheckRedirect =
 			func(req *http.Request, via []*http.Request) error {
-				if strings.Contains(req.Header.Get("Location"), "https") {
+				if strings.Contains(via[0].Header.Get("Location"), "https") &&
+					strings.Contains(via[0].Header.Get("Location"), "robots.txt") &&
+					len(via) < 2 {
+
+					req.Header.Set("User-Agent", *useragent)
 					return nil
 				}
-				e := errors.New("Will not follow redirects due to golang issues")
+				e := errors.New("Invalid redirect")
 				return e
 			}
 		req.Header.Set("User-Agent", *useragent)
