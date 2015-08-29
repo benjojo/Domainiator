@@ -51,10 +51,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		client := &http.Client{}
 		client.CheckRedirect =
 			func(req *http.Request, via []*http.Request) error {
-				if strings.Contains(via[0].Header.Get("Location"), "https") &&
-					strings.Contains(via[0].Header.Get("Location"), "robots.txt") &&
-					len(via) < 2 {
-
+				if strings.Contains(via[0].Header.Get("Location"), "robots.txt") && len(via) < 2 {
 					req.Header.Set("User-Agent", *useragent)
 					return nil
 				}
@@ -100,7 +97,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 				Sucessful:   false,
 				DNSIP:       ip[0].String(),
 				RequestTime: 0,
-				StatusCode:  urlobj.StatusCode,
+				StatusCode:  0,
 			}
 
 			resultsChan <- Payload
