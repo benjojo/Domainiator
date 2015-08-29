@@ -100,7 +100,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 				Sucessful:   false,
 				DNSIP:       ip[0].String(),
 				RequestTime: 0,
-				FailReason:  err.Error(),
+				FailReason:  fmt.Sprintf("%s", err),
 				StatusCode:  urlobj.StatusCode,
 			}
 
