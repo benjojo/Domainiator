@@ -51,10 +51,14 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		client := &http.Client{}
 		client.CheckRedirect =
 			func(req *http.Request, via []*http.Request) error {
-				if strings.Contains(via[len(via)-1].Header.Get("Location"), "robots.txt") && len(via) < 3 {
+
+				if req.URL.RequestURI() == "/robots.txt" && len(via) < 3 {
+					// fmt.Printf("PASSED %s%s\n", req.URL.Host, req.URL.RequestURI())
 					req.Header.Set("User-Agent", *useragent)
 					return nil
 				}
+				fmt.Printf("FAILED %s%s\n", req.URL.Host, req.URL.RequestURI())
+
 				e := errors.New("Invalid redirect")
 				return e
 			}
@@ -72,8 +76,8 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 			if *saveoutput && urlobj.StatusCode == 200 {
 				b, e := ioutil.ReadAll(urlobj.Body)
 				if e == nil {
-					os.Mkdir(fmt.Sprintf("./%s", string(strings.TrimSpace(url)[0])), 744)
-					ioutil.WriteFile(fmt.Sprintf("./%s/%s.%s", string(strings.TrimSpace(url)[0]), strings.TrimSpace(url), *pathtoquery), b, 744)
+					os.Mkdir(fmt.Sprintf("./%s", string(strings.TrimSpace(url)[0])), 0775)
+					ioutil.WriteFile(fmt.Sprintf("./%s/%s.%s", string(strings.TrimSpace(url)[0]), strings.TrimSpace(url), *pathtoquery), b, 0664)
 				}
 			} else {
 				urlobj.Body.Close()
