@@ -51,7 +51,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 		client := &http.Client{}
 		client.CheckRedirect =
 			func(req *http.Request, via []*http.Request) error {
-				if strings.Contains(via[0].Header.Get("Location"), "robots.txt") && len(via) < 2 {
+				if strings.Contains(via[len(via)-1].Header.Get("Location"), "robots.txt") && len(via) < 3 {
 					req.Header.Set("User-Agent", *useragent)
 					return nil
 				}
