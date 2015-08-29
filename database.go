@@ -13,6 +13,6 @@ func GetDB() (con *sql.DB, e error) {
 		return con, err
 	}
 	con.Ping()
-	con.Exec("SET NAMES UTF8")
+	_, err = con.Exec("SET NAMES UTF8")
 	return con, err
 }

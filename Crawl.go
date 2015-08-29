@@ -40,7 +40,7 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 			tld = ".com"
 		}
 
-		formattedurl := fmt.Sprintf("http://%s%s%s", strings.TrimSpace(url), tld, *pathtoquery)
+		formattedurl := fmt.Sprintf("%s://%s%s/%s", *protocal, strings.TrimSpace(url), tld, *pathtoquery)
 		req, err := http.NewRequest("GET", formattedurl, nil)
 
 		if err != nil {
@@ -112,15 +112,24 @@ func worker(linkChan chan string, resultsChan chan LogPayload, wg *sync.WaitGrou
 
 func Logger(resultChan chan LogPayload) {
 	Database, e := GetDB()
-	Query, _ := Database.Prepare("INSERT INTO `Domaniator`.`Results` (`Domain`, `Data`) VALUES (?, ?)")
+	Query, _ := Database.Prepare("INSERT INTO `Results` (`Domain`, `Data`) VALUES (?, ?)")
 
 	if e != nil {
 		panic("Logger could not connect to the database")
 	}
 
 	for results := range resultChan {
-		b, _ := json.Marshal(results)
-		Query.Exec(results.DomainName, string(b))
+		b, e := json.Marshal(results)
+
+		if e != nil {
+			fmt.Println("Could not JSON encode packet")
+		}
+		_, e = Query.Exec(results.DomainName, string(b))
+
+		if e != nil {
+			fmt.Printf("Could not store data for domain %s for reason: %s\n", results.DomainName, e.Error())
+		}
+
 	}
 }
 
@@ -129,16 +138,19 @@ var saveoutput *bool
 var presumecom *bool
 var databasestring *string
 var useragent *string
+var protocal *string
 
 func main() {
 	runtime.GOMAXPROCS(3)
 	inputfile := flag.String("input", "", "The file that will be read.")
 	pathtoquery = flag.String("querypath", "/", "The path that will be queried.")
 	saveoutput = flag.Bool("savepage", false, "Save the file that is queried to disk")
-	presumecom = flag.Bool("presumecom", true, "Presume that the file lines need .com adding to them")
+	presumecom = flag.Bool("presumecom", false, "Presume that the file lines need .com adding to them")
 	concurrencycount := flag.Int("concount", 600, "How many go routines you want to start")
 	databasestring = flag.String("dbstring", "root:@tcp(127.0.0.1:3306)/Domaniator", "What to connect to the database with")
 	useragent = flag.String("ua", "Mozilla/5.0 (HTTP Header Survey By Benjojo +https://github.com/benjojo/Domainiator) (Like elinks)", "What UA to send the request with")
+	protocal = flag.String("protocal", "http", "http or https")
+	logbuffer := flag.Int("logbuffer", 100, "How many logging entries should be buffered before blocking")
 
 	flag.Parse()
 
@@ -154,7 +166,7 @@ func main() {
 	File := strings.Split(string(b), "\n")
 
 	lCh := make(chan string)
-	rCh := make(chan LogPayload, 100)
+	rCh := make(chan LogPayload, *logbuffer)
 	wg := new(sync.WaitGroup)
 	go Logger(rCh)
 	// Adding routines to workgroup and running then
